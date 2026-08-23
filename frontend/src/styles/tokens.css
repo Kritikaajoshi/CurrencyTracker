@@ -1,0 +1,65 @@
+/* ---------------------------------------------------------------
+   Design tokens — "Ledger" direction.
+   A finance-ledger aesthetic: ink navy, antique gold, serif headlines,
+   monospace data. Deliberately not the generic cream+terracotta or
+   black+neon-green look.
+------------------------------------------------------------------ */
+:root {
+  /* Color */
+  --ink-950: #0a0f1a;
+  --ink-900: #0f1626;
+  --ink-800: #16203564;
+  --surface: #131c30;
+  --surface-raised: #1a2540;
+  --hairline: #2a3757;
+  --gold: #c9a227;
+  --gold-bright: #e0bc4a;
+  --parchment: #ece7d8;
+  --parchment-dim: #a9a698;
+  --mint: #3fb68a;
+  --rust: #e2604a;
+
+  /* Type */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', monospace;
+
+  /* Layout */
+  --radius: 3px;
+  --container: 1180px;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ink-950);
+  background-image:
+    radial-gradient(circle at 15% 0%, rgba(201, 162, 39, 0.06), transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(63, 182, 138, 0.04), transparent 40%);
+  color: var(--parchment);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; margin: 0; letter-spacing: -0.01em; }
+
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+a { color: var(--gold-bright); }
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold-bright);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
