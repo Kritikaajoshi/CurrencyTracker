@@ -127,20 +127,3 @@ never depends on network access or a real API key.
 - Add a `GET /api/currency/supported` endpoint and validate currency codes
   against it instead of trusting any 3-letter string.
 
-## Resume bullet points
-
-Feel free to adapt these directly:
-
-- *Built a full-stack currency conversion platform (React, Node/Express,
-  MongoDB) integrating a third-party FX rate API, reducing external API
-  calls by ~95% under concurrent load via an in-memory caching layer.*
-- *Designed and implemented a background cron job to evaluate user-defined
-  rate alerts against live exchange rates, batching lookups by currency to
-  minimize third-party API usage.*
-- *Implemented JWT-based authentication with bcrypt password hashing,
-  per-user data scoping, and rate-limited/validated REST endpoints.*
-- *Wrote an integration test suite (Jest, Supertest, mongodb-memory-server)
-  covering auth flows and currency conversion logic with mocked external
-  dependencies.*
-- *Containerized the full stack (Node backend, Nginx-served React frontend,
-  MongoDB) with Docker Compose for one-command local deployment.*
