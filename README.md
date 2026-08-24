@@ -1,129 +1,107 @@
-# Ledger — Currency Tracker
+# Currency Tracker
 
-A full-stack currency conversion and FX-rate tracking app. Users convert between
-currencies, watch pairs on a live dashboard, set target-rate alerts that get
-checked by a background job, and browse their own conversion history.
+Live app: https://ledger-currency-tracker.netlify.app/
+Backend API: https://currencytracker-uv2p.onrender.com
+Source code: https://github.com/Kritikaajoshi/CurrencyTracker
 
-Live rates and historical data come from [Fixer](https://apilayer.com/marketplace/fixer-api)
-(via APILayer).
+Note: the backend is hosted on Render's free tier, so the first request after a period of inactivity can take 30 to 60 seconds while it wakes up.
 
-## Why this project (and not another CRUD app)
+## Description
 
-Most portfolio projects are "call an API, show the JSON." This one has three
-things that come up naturally in a technical interview:
+A full-stack web application for currency conversion and exchange rate tracking. Users can convert between currencies, view historical rate trends, maintain a watchlist of currency pairs, set target-rate alerts, and view their conversion history. Exchange rate data comes from the Fixer API (via APILayer).
 
-1. **A caching layer in front of a rate-limited third-party API.** The free
-   Fixer tier updates hourly and has a low request quota. `fixerService.js`
-   caches responses in-memory per (base currency) and per (base, historical
-   date), so 100 users loading the dashboard in the same 10 minutes costs one
-   upstream call, not 100.
-2. **A background cron job**, independent of any request/response cycle.
-   `jobs/alertChecker.js` runs on a schedule, batches active alerts by base
-   currency to minimize API calls, and flips alerts to "triggered" when their
-   condition is met — the kind of "state changes without a user clicking
-   anything" problem that shows up in real systems (notifications, billing,
-   monitoring).
-3. **A real auth + authorization story**, not just a login form: JWTs,
-   password hashing, protected routes, and data scoped per-user (your
-   watchlist isn't my watchlist).
+## Features
+
+- User registration and login (JWT authentication, bcrypt password hashing)
+- Currency conversion with live exchange rates
+- 14-day historical rate trend chart
+- Watchlist for tracking specific currency pairs
+- Rate alerts that are checked automatically in the background every 15 minutes
+- Conversion history saved per user
+- In-memory caching of exchange rate data to reduce third-party API calls
+
+## Tech stack
+
+- Frontend: React, Vite, Recharts
+- Backend: Node.js, Express
+- Database: MongoDB (Mongoose)
+- External API: Fixer (APILayer)
+- Testing: Jest, Supertest, mongodb-memory-server
+- Deployment: Netlify (frontend), Render (backend), MongoDB Atlas (database)
 
 ## Architecture
 
 ```
 currency-tracker/
-├── backend/                 Node.js + Express + MongoDB (Mongoose)
+├── backend/
 │   ├── src/
-│   │   ├── config/db.js         Mongo connection
-│   │   ├── models/               User, ConversionHistory, Watchlist, RateAlert
+│   │   ├── config/db.js          MongoDB connection
+│   │   ├── models/                User, ConversionHistory, Watchlist, RateAlert
 │   │   ├── services/
-│   │   │   ├── fixerService.js   Fixer API client + caching
-│   │   │   └── cacheService.js   In-memory TTL cache (node-cache)
-│   │   ├── controllers/          Route handlers, one file per resource
-│   │   ├── routes/               Express routers + express-validator rules
-│   │   ├── middleware/           JWT auth, rate limiting, error handling, validation
-│   │   ├── jobs/alertChecker.js  Cron job that evaluates rate alerts
-│   │   ├── app.js                Express app assembly
-│   │   └── server.js             Entry point: connect DB, start cron, listen
-│   └── tests/                    Jest + Supertest, Fixer mocked, in-memory Mongo
+│   │   │   ├── fixerService.js    Fixer API client with caching
+│   │   │   └── cacheService.js    In-memory TTL cache
+│   │   ├── controllers/           Route handlers
+│   │   ├── routes/                Express routers with validation rules
+│   │   ├── middleware/            Auth, rate limiting, error handling, validation
+│   │   ├── jobs/alertChecker.js   Background cron job for rate alerts
+│   │   ├── app.js
+│   │   └── server.js
+│   └── tests/
 │
-├── frontend/                 React 18 + Vite
+├── frontend/
 │   └── src/
-│       ├── components/           Converter, TrendChart, Watchlist, Alerts, RateLedger…
-│       ├── pages/                Dashboard, Login, Register
+│       ├── components/            Converter, TrendChart, Watchlist, Alerts, etc.
+│       ├── pages/                 Dashboard, Login, Register
 │       ├── context/AuthContext.jsx
-│       ├── services/api.js       Axios instance with JWT interceptor
-│       └── styles/               Design tokens + stylesheet
+│       ├── services/api.js
+│       └── styles/
 │
-├── docker-compose.yml         mongo + backend + frontend (nginx), one command
+├── docker-compose.yml
 └── README.md
 ```
 
-**Data flow for a conversion:** browser → `POST /api/currency/convert` →
-`fixerService.convert()` (cache hit, or one call to Fixer) → result returned
-*and* written to `ConversionHistory` for that user → shown in the History
-panel on next load.
+## How it works
 
-**Data flow for an alert:** user sets "USD/JPY above 155" → stored as a
-`RateAlert` document → every 15 minutes (configurable) the cron job pulls
-live rates for every base currency with active alerts, checks each alert's
-condition, and marks matches `triggered` — with a comment in the code for
-exactly where you'd hook in email/push delivery later.
+When a user converts currency, the request goes to the backend, which checks its cache for recent rate data before calling Fixer. The result is returned to the user and saved to their conversion history.
 
-## Running it locally
+For rate alerts, a background job runs every 15 minutes, checks current rates against each active alert's target, and marks matching alerts as triggered.
 
-**Prerequisites:** Node 18+, MongoDB running locally (or use Docker Compose
-below), and a free [Fixer API key](https://apilayer.com/marketplace/fixer-api).
+## Running locally
+
+Requirements: Node 18+, MongoDB (local or via Docker Compose below), and a free Fixer API key from apilayer.com.
 
 ```bash
 # Backend
 cd backend
-cp .env.example .env        # fill in FIXER_API_KEY and JWT_SECRET
+cp .env.example .env
 npm install
-npm run dev                 # http://localhost:5000
+npm run dev
 
 # Frontend (separate terminal)
 cd frontend
 npm install
-npm run dev                 # http://localhost:5173 (proxies /api to :5000)
+npm run dev
 ```
 
-**Or with Docker Compose** (spins up MongoDB, backend, and frontend together):
+Or with Docker Compose:
 
 ```bash
-cp backend/.env.example backend/.env   # fill in FIXER_API_KEY and JWT_SECRET
+cp backend/.env.example backend/.env
 docker compose up --build
-# frontend: http://localhost:8080
-# backend:  http://localhost:5000
 ```
 
-## Running the tests
+## Running tests
 
 ```bash
 cd backend
 npm test
 ```
 
-Tests use `mongodb-memory-server` to spin up a real (temporary) MongoDB
-instance and `supertest` to hit the Express app directly — no manual server
-start needed. The Fixer service is mocked in the currency tests so the suite
-never depends on network access or a real API key.
+Tests use an in-memory MongoDB instance and mock the Fixer API, so they run without needing a real database or API key.
 
-> Note: in the sandboxed environment this project was built in, the test
-> runner couldn't download the MongoDB binary (outbound network is
-> allowlisted to package registries only, not `fastdl.mongodb.org`). Every
-> file was syntax-checked and the Express app was booted and hit with real
-> HTTP requests to confirm the routing, middleware, and error handling all
-> wire together correctly — see the build log for that. The test suite will
-> run as-is on a normal machine or in CI.
+## Deployment
 
-## What to extend if you want to go further
-
-- Swap the alert job's console.log for a real notification (email via
-  Nodemailer/SES, or a websocket push to a connected client).
-- Add refresh tokens instead of a single 7-day JWT.
-- Move the in-memory cache to Redis if you deploy multiple backend instances
-  (right now the cache is per-process, which is fine for one instance but
-  won't be shared across a horizontally scaled deployment).
-- Add a `GET /api/currency/supported` endpoint and validate currency codes
-  against it instead of trusting any 3-letter string.
-
+- Frontend is deployed on Netlify, built from the `frontend` directory.
+- Backend is deployed on Render, running `node src/server.js`.
+- Database is hosted on MongoDB Atlas.
+- The frontend and backend are connected through environment variables: `VITE_API_URL` on the frontend points to the backend, and `CLIENT_ORIGIN` on the backend is set to the frontend URL to allow cross-origin requests.
