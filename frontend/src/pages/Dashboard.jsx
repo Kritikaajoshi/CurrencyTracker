@@ -20,7 +20,7 @@ export default function Dashboard() {
         <h1>Every rate, entered in the ledger.</h1>
         <p className="hero-sub">
           Real-time conversion backed by Fixer, with your own trend charts, watchlists,
-          and target-rate alerts — checked in the background, whether or not you're looking.
+          and target-rate alerts checked in the background, whether or not you're looking.
         </p>
       </div>
 

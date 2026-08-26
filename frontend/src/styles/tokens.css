@@ -1,9 +1,9 @@
-/* ---------------------------------------------------------------
+/* 
    Design tokens — "Ledger" direction.
    A finance-ledger aesthetic: ink navy, antique gold, serif headlines,
    monospace data. Deliberately not the generic cream+terracotta or
    black+neon-green look.
------------------------------------------------------------------- */
+*/
 :root {
   /* Color */
   --ink-950: #0a0f1a;
