@@ -29,7 +29,7 @@ export default function Register() {
     <div className="auth-page">
       <form className="auth-card" onSubmit={handleSubmit}>
         <h1>Create account</h1>
-        <p className="auth-sub">Free — track rates, set alerts, and keep a conversion history.</p>
+        <p className="auth-sub">Free: track rates, set alerts, and keep a conversion history.</p>
 
         <div className="field">
           <label htmlFor="name">Name</label>
