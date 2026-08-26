@@ -8,7 +8,6 @@ export default function NavBar() {
   return (
     <header className="navbar">
       <Link to="/" className="brand">
-        <span className="brand-mark">§</span>
         <span className="brand-name">Ledger</span>
       </Link>
       <nav className="nav-links">
