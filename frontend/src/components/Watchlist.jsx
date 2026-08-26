@@ -48,7 +48,7 @@ export default function Watchlist() {
       {error && <p className="error-text">{error}</p>}
 
       <ul className="list">
-        {items.length === 0 && <li className="empty-state">No pairs yet — add one above to track it.</li>}
+        {items.length === 0 && <li className="empty-state">No pairs yet, add one above to track it.</li>}
         {items.map((item) => (
           <li key={item._id} className="list-row">
             <span className="mono pair-label">{item.from}/{item.to}</span>
