@@ -66,7 +66,7 @@ export default function Alerts() {
       {error && <p className="error-text">{error}</p>}
 
       <ul className="list">
-        {items.length === 0 && <li className="empty-state">No alerts yet — set a target rate above.</li>}
+        {items.length === 0 && <li className="empty-state">No alerts yet, set a target rate above.</li>}
         {items.map((a) => (
           <li key={a._id} className="list-row">
             <span className="mono pair-label">
