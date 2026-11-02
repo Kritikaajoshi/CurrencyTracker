@@ -4,6 +4,9 @@
   "description": "REST API for currency conversion, historical FX tracking, watchlists, and rate alerts (Fixer API + MongoDB)",
   "main": "src/server.js",
   "type": "commonjs",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
