@@ -1,5 +1,7 @@
 # Currency Tracker
 
+[![CI](https://github.com/Kritikaajoshi/CurrencyTracker/actions/workflows/ci.yml/badge.svg)](https://github.com/Kritikaajoshi/CurrencyTracker/actions/workflows/ci.yml)
+
 Live app: https://ledger-currency-tracker.netlify.app/
 Backend API: https://currencytracker-uv2p.onrender.com
 Source code: https://github.com/Kritikaajoshi/CurrencyTracker
