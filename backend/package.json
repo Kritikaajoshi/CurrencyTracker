@@ -1,6 +1,6 @@
 {
   "name": "currency-tracker-backend",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "REST API for currency conversion, historical FX tracking, watchlists, and rate alerts (Fixer API + MongoDB)",
   "main": "src/server.js",
   "type": "commonjs",
